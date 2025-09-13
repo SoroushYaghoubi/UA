@@ -1,9 +1,7 @@
-from manimlib import *
+from manim import *
 
-class SquareToCircle(Scene):
+class MyFirstScene(Scene):
     def construct(self):
-        circle = Circle()
-        circle.set_fill(BLUE, opacity=0.5)
-        circle.set_stroke(BLUE_E, width=4)
-
-        self.add(circle)
+        text = Text("Hello Tropical Gaussians!")
+        self.play(Write(text))
+        self.wait(2)
