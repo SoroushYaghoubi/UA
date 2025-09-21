@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 class UA(MovingCameraScene):
-    def draw_layer(self, center, R, iteration):
+    def draw_layer(self, center, R, iteration, lastiter=False):
         stroke = 2 * (1 / iteration)
 
         r = R * math.sin(math.pi/3) / (1 + math.sin(math.pi/3))
@@ -34,7 +34,15 @@ class UA(MovingCameraScene):
         top_circle = inner_circles[0]
         center = top_circle.get_center()
         radius = top_circle.radius
-        return center, radius, labels
+
+        if not lastiter:
+            return center, radius, labels
+        else:
+            midpoint_bottom = (inner_circles[1].get_center() + inner_circles[2].get_center()) / 2
+            self.play(
+                self.camera.frame.animate.move_to(midpoint_bottom + LEFT/(2*iteration)).set(width=radius * 5),
+                run_time=1.5
+            )
 
     def construct(self):
         center = np.array([0, 0, 0])
@@ -43,13 +51,16 @@ class UA(MovingCameraScene):
         outer = Circle(radius=R, color=WHITE, stroke_width=1).move_to(center)
         self.play(Create(outer))
 
-        v_p = 4
+        v_p = 3
         for i in range(1, v_p):
             center, R, labels = self.draw_layer(center, R, i)
             self.wait(1)
             self.play(
-                self.camera.frame.animate.move_to(center).set(height=R * 2),
+                self.camera.frame.animate.move_to(center+LEFT/i).set(height=R * 2),
                 run_time=1.5
             )
             if i != v_p-1:
                 self.play(*[FadeOut(label) for label in labels])
+            else: 
+                self.play(*[FadeOut(label) for label in labels])
+                self.draw_layer(center, R, iteration=i, lastiter=True)
