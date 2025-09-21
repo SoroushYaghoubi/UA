@@ -4,3 +4,4 @@ ua-env/
 **/__pycache__/
 **/.ipynb_checkpoints
 **/media/
+**/iframe_figures
