@@ -3,6 +3,13 @@ import math
 import numpy as np
 
 class UA(MovingCameraScene):
+    def topLeft(self):
+        center = self.camera.frame.get_center()
+        half_w = self.camera.frame.get_width() / 2
+        half_h = self.camera.frame.get_height() / 2
+        top_left = center + [-half_w, half_h, 0]
+        return top_left
+    
     def draw_layer(self, center, R, iteration, lastiter=False):
         stroke = 2 * (1 / iteration)
 
@@ -23,16 +30,35 @@ class UA(MovingCameraScene):
             MathTex(rf"{3**iteration}k + {2*3**(iteration-1)}", font_size=font_size).move_to(inner_circles[2].get_center())
         ]
 
-        self.play(*[Write(label) for label in labels],
-                  *[Create(c) for c in inner_circles])
-
         top_circle = inner_circles[0]
         center = top_circle.get_center()
         radius = top_circle.radius
 
+        self.play(
+            *[Write(label) for label in labels],
+            *[Create(c) for c in inner_circles]
+        )
+
+
         if not lastiter:
+            prob = inner_circles[0].get_center() + r*(0.8*UP + LEFT)
+            eq = MathTex(r"p = \frac{1}{3}", font_size=font_size).move_to(prob, aligned_edge=UL) 
+            bg = BackgroundRectangle(eq, color=YELLOW_C, fill_opacity=0.2, buff=0.1*R)
+            group = VGroup(bg, eq)
+            self.play(Write(group))
+            self.wait(1)
+            self.play(FadeOut(group))
+
             return center, radius, labels
         else:
+            prob = inner_circles[1].get_center() + r*(0.6*UP + RIGHT)
+            eq = MathTex(r"p = 1-\frac{1}{3}", font_size=font_size).move_to(prob, aligned_edge=UL) 
+            bg = BackgroundRectangle(eq, color=YELLOW_C, fill_opacity=0.2, buff=0.1*R)
+            group = VGroup(bg, eq)
+            self.play(Write(group))
+            self.wait(1)
+            self.play(FadeOut(group))
+
             midpoint_bottom = (inner_circles[1].get_center() + inner_circles[2].get_center()) / 2
             self.play(
                 self.camera.frame.animate.move_to(midpoint_bottom + LEFT/(2*iteration)).set(width=radius * 5),
