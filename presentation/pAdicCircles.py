@@ -22,6 +22,8 @@ class UA(MovingCameraScene):
             for a in angles
         ]
         inner_circles[0].set_color(BLUE_C)
+        inner_circles[1].set_opacity(0.05)
+        inner_circles[2].set_opacity(0.05)
 
         font_size = R*7
         labels = [
@@ -41,7 +43,7 @@ class UA(MovingCameraScene):
 
 
         if not lastiter:
-            prob = inner_circles[0].get_center() + r*(0.8*UP + LEFT)
+            prob = inner_circles[0].get_center() + r*(0.7*UP + LEFT)
             eq = MathTex(r"p = \frac{1}{3}", font_size=font_size).move_to(prob, aligned_edge=UL) 
             bg = BackgroundRectangle(eq, color=YELLOW_C, fill_opacity=0.2, buff=0.1*R)
             group = VGroup(bg, eq)
@@ -50,14 +52,14 @@ class UA(MovingCameraScene):
             self.play(FadeOut(group))
 
             return center, radius, labels
+        
         else:
-            prob = inner_circles[1].get_center() + r*(0.6*UP + RIGHT)
+            prob = inner_circles[1].get_center() + r*0.2*UP + 0.7*r*RIGHT
             eq = MathTex(r"p = 1-\frac{1}{3}", font_size=font_size).move_to(prob, aligned_edge=UL) 
             bg = BackgroundRectangle(eq, color=YELLOW_C, fill_opacity=0.2, buff=0.1*R)
             group = VGroup(bg, eq)
             self.play(Write(group))
             self.wait(1)
-            self.play(FadeOut(group))
 
             midpoint_bottom = (inner_circles[1].get_center() + inner_circles[2].get_center()) / 2
             self.play(
