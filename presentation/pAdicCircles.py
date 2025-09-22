@@ -17,15 +17,10 @@ class UA(MovingCameraScene):
         inner_circles[0].set_color(BLUE_C)
 
         font_size = R*7
-        texts = [
-            f"{3**iteration}k",
-            f"{3**iteration}k + {1*3**(iteration-1)}",
-            f"{3**iteration}k + {2*3**(iteration-1)}"
-        ]
-
         labels = [
-            Text(texts[i], font_size=font_size).move_to(inner_circles[i].get_center())
-            for i in range(3)
+            MathTex(rf"{3**iteration}k", font_size=font_size).move_to(inner_circles[0].get_center()),
+            MathTex(rf"{3**iteration}k + {1*3**(iteration-1)}", font_size=font_size).move_to(inner_circles[1].get_center()),
+            MathTex(rf"{3**iteration}k + {2*3**(iteration-1)}", font_size=font_size).move_to(inner_circles[2].get_center())
         ]
 
         self.play(*[Write(label) for label in labels],
@@ -51,7 +46,7 @@ class UA(MovingCameraScene):
         outer = Circle(radius=R, color=WHITE, stroke_width=1).move_to(center)
         self.play(Create(outer))
 
-        v_p = 3
+        v_p = 4
         for i in range(1, v_p):
             center, R, labels = self.draw_layer(center, R, i)
             self.wait(1)
@@ -59,8 +54,7 @@ class UA(MovingCameraScene):
                 self.camera.frame.animate.move_to(center+LEFT/i).set(height=R * 2),
                 run_time=1.5
             )
-            if i != v_p-1:
-                self.play(*[FadeOut(label) for label in labels])
-            else: 
-                self.play(*[FadeOut(label) for label in labels])
-                self.draw_layer(center, R, iteration=i, lastiter=True)
+
+            self.play(*[FadeOut(label) for label in labels])
+            if i == v_p-1:
+                self.draw_layer(center, R, iteration=i+1, lastiter=True)
